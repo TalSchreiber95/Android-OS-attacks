@@ -9,3 +9,5 @@
 אפליקציות אלו הם רק לשימוש לצורך בדיקת המסווג.
 
 הסיסמא לקובץ הזיפ היא nivavisecsvm.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/7B3aMnnTjgE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
