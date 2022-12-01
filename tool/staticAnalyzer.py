@@ -1085,9 +1085,6 @@ def test():
                 filePath = os.path.join(r, file)
                 print('Start working on file: ', file)
                 run(filePath, path, 0, 0, '')
+
             # break
-
-
-# run("/Users/motidahari/projects/android/Android-OS-attacks/niv_avi_files/samples/app93.apk",
-#     "../samples", 0, 0, '')
 test()
