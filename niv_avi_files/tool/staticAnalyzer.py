@@ -130,7 +130,7 @@ def checkAPIpermissions(smaliLocation):
     fileList = sorted(fileList)
     for file in fileList:
         try:
-            #file = re.compile('[%s]' % re.escape(CC)).sub('', file)
+            # file = re.compile('[%s]' % re.escape(CC)).sub('', file)
             smaliFile = open(file).read()
             for apiCall in apiCallList:
                 apiCall = apiCall.split("|")
@@ -204,7 +204,7 @@ def getActivities(sampleFile):
         if "activity" in line:
             try:
                 activity = line.split("'")[1].split(".")[-1]
-                #activity = re.compile('[%s]' % re.escape(CC)).sub('', activity)
+                # activity = re.compile('[%s]' % re.escape(CC)).sub('', activity)
                 activity = "." + activity
                 # print activity
                 activities.append(activity.encode('ascii', 'replace'))
@@ -228,7 +228,7 @@ def getActivities(sampleFile):
                 else:
                     nextLine = manifest[i + 1].split("=")[1].split('"')[1]
                 # print 'VEDIAMO', nextLine
-                #nextLine = re.compile('[%s]' % re.escape(CC)).sub('', nextLine)
+                # nextLine = re.compile('[%s]' % re.escape(CC)).sub('', nextLine)
                 if (nextLine not in activities) and (nextLine != ""):
                     activities.append(nextLine.encode('ascii', 'replace'))
                 else:
@@ -253,7 +253,7 @@ def getFeatures(logFile, sampleFile):
     for sampleInfo in sampleInfos:
         if sampleInfo.startswith("uses-feature"):
             sampleFeature = sampleInfo.split("'")[1]
-            #sampleFeature = re.compile('[%s]' % re.escape(CC)).sub('',sampleFeature)
+            # sampleFeature = re.compile('[%s]' % re.escape(CC)).sub('',sampleFeature)
             log(logFile, "Feature:", sampleFeature, 1)
             if (sampleFeature not in appFeatures) and (sampleFeature != ""):
                 appFeatures.append(sampleFeature.encode('ascii', 'replace'))
@@ -273,7 +273,7 @@ def getFilesInsideApk(sampleFile):
     for line in xml:
         try:
             files = line.split("\n")[0]
-            #files = re.compile('[%s]' % re.escape(CC)).sub('', files)
+            # files = re.compile('[%s]' % re.escape(CC)).sub('', files)
             if files != "":
                 appFiles.append(files.encode('ascii', 'replace'))
         except:
@@ -324,7 +324,7 @@ def getNet(sampleFile):
         if "android.net" in line:
             try:
                 net = line.split("=")[1].split("\"")[1]
-                #net = re.compile('[%s]' % re.escape(CC)).sub('', net)
+                # net = re.compile('[%s]' % re.escape(CC)).sub('', net)
                 if net != "":
                     appNet.append(net.encode('ascii', 'replace'))
             except:
@@ -374,7 +374,7 @@ def getProviders(logFile, sampleFile):
         if "provider" in line:
             try:
                 provider = line.split("=")[1].split("\"")[1]
-                #provider = re.compile('[%s]' % re.escape(CC)).sub('', provider)
+                # provider = re.compile('[%s]' % re.escape(CC)).sub('', provider)
                 log(logFile, "AndroidManifest", provider, 1)
                 if appProviders != "":
                     appProviders.append(provider.encode('ascii', 'replace'))
@@ -456,7 +456,7 @@ def getServicesReceivers(logFile, sampleFile):
         if "service" in line:
             try:
                 nextLine = manifest[i + 1].split("=")[1].split('"')[1]
-                #nextLine = re.compile('[%s]' % re.escape(CC)).sub('', nextLine)
+                # nextLine = re.compile('[%s]' % re.escape(CC)).sub('', nextLine)
                 log(logFile, "AndroidManifest", nextLine, 1)
                 if (nextLine not in servicesANDreceiver) and (nextLine != ""):
                     servicesANDreceiver.append(
@@ -469,7 +469,7 @@ def getServicesReceivers(logFile, sampleFile):
         if "receiver" in line:
             try:
                 nextLine = manifest[i + 1].split("=")[1].split('"')[1]
-                #nextLine = re.compile('[%s]' % re.escape(CC)).sub('', nextLine)
+                # nextLine = re.compile('[%s]' % re.escape(CC)).sub('', nextLine)
                 log(logFile, "AndroidManifest", nextLine, 1)
                 if (nextLine not in servicesANDreceiver) and (nextLine != ""):
                     servicesANDreceiver.append(
@@ -494,7 +494,7 @@ def parseSmaliCalls(logFile, smaliLocation):
     for file in fileList:
         try:
             # print(f)
-            #f = re.compile('[%s]' % re.escape(CC)).sub('', f)
+            # f = re.compile('[%s]' % re.escape(CC)).sub('', f)
             # print(f)
             smaliFile = open(file).readlines()
             i = 0
@@ -921,17 +921,44 @@ def createOutput(workingDir, appNet, appProviders, appPermissions, appFeatures,
                                      datetime.datetime.utcnow().strftime(
                                          '%Y-%m-%dT%H:%M:%SZ'))
 
+    # output = report_to_feature_vector(output)
+    # outpath = os.path.join(workingDir, 'results/mal_train_'+src+'.json')
+    # print("saving results at {}...".format(outpath))
+    # jsonFileName = outpath
+    # jsonFile = open(jsonFileName, "a+")
+    # jsonFile.write(json.dumps(output))
+    # if last-ind > 0:
+    #     jsonFile.write(",")
+    # else:
+    #     jsonFile.write("]")
+    # jsonFile.close()
+    # return output
+
     output = report_to_feature_vector(output)
     outpath = os.path.join(workingDir, 'results/mal_train_'+src+'.json')
     print("saving results at {}...".format(outpath))
-    jsonFileName = outpath
-    jsonFile = open(jsonFileName, "a+")
-    jsonFile.write(json.dumps(output))
-    if last-ind > 0:
-        jsonFile.write(",")
+
+    # Start here ******* tal
+    # arr = None
+    with open(outpath, "r") as jsonFileRef:
+        arr = json.load(jsonFileRef)
+        jsonFileRef.close()
+
+        # jsonFileRef.close()
+
+    arr.append(output)
+    print('arr', arr)
+    with open(output, 'w+') as jsonFile:
+        # jsonFile.truncate(0)
+        jsonFile.write(json.dumps(arr))
+        jsonFile.close()
+    # jsonFile = open(jsonFileName, "a+")
+    # jsonFile.write(json.dumps([{"arr": "check"}]))
+    # jsonFile.close()
+    # if last-ind > 0:
+    #     jsonFile.write(",")
     # else:
     #     jsonFile.write("]")
-    jsonFile.close()
     return output
 
 
@@ -982,7 +1009,7 @@ def report_to_feature_vector(report):
 #########################################################################################
 def run(sampleFile, workingDir, ind, last, src):
     try:
-        print(sampleFile)
+        # print(sampleFile)
         workingDir = workingDir if workingDir.endswith(
             '/') else workingDir + '/'
         # function calls
@@ -1052,12 +1079,20 @@ def test():
     parent = Path(dir_path).parent
     apkFolder = 'samples'
     path = '{parent}/{apkFolder}'.format(parent=parent, apkFolder=apkFolder)
+    pathCleanFiles = '{parent}/{apkFolder}/results/mal_train_.json'.format(
+        parent=parent, apkFolder=apkFolder)
+    with open(pathCleanFiles, 'w') as cleanFile:
+        cleanFile.truncate(0)
+        cleanFile.write(json.dumps([]))
+        cleanFile.close()
+
     for r, d, f in os.walk(path):
         for file in f:
             if file.endswith(".apk"):
                 filePath = os.path.join(r, file)
-                print(filePath)
+                # print(filePath)
                 run(filePath, path, 0, 0, '')
+            break
 
 
 # run("/Users/motidahari/projects/android/Android-OS-attacks/niv_avi_files/samples/app93.apk",
