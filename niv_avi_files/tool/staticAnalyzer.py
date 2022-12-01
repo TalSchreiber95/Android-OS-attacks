@@ -40,7 +40,10 @@ import sys
 import ssdeep
 
 import settings
+import warnings
 
+# ignore DeprecationWarning when run file
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # global variables
 l1 = [x for x in range(0, 32)]
@@ -920,7 +923,7 @@ def createOutput(workingDir, appNet, appProviders, appPermissions, appFeatures,
     run_id = '{}drebin-{}@{}'.format(sha, str(uuid.uuid4())[:6],
                                      datetime.datetime.utcnow().strftime(
                                          '%Y-%m-%dT%H:%M:%SZ'))
-
+    # old code
     # output = report_to_feature_vector(output)
     # outpath = os.path.join(workingDir, 'results/mal_train_'+src+'.json')
     # print("saving results at {}...".format(outpath))
@@ -936,29 +939,19 @@ def createOutput(workingDir, appNet, appProviders, appPermissions, appFeatures,
 
     output = report_to_feature_vector(output)
     outpath = os.path.join(workingDir, 'results/mal_train_'+src+'.json')
-    print("saving results at {}...".format(outpath))
+    print(
+        "Saving results at results/mal_train_{src}.json file...".format(src=src))
 
-    # Start here ******* tal
-    # arr = None
     with open(outpath, "r") as jsonFileRef:
         arr = json.load(jsonFileRef)
         jsonFileRef.close()
 
-        # jsonFileRef.close()
-
     arr.append(output)
-    print('arr', arr)
-    with open(output, 'w+') as jsonFile:
-        # jsonFile.truncate(0)
+    with open(outpath, 'w+') as jsonFile:
+        jsonFile.truncate(0)
         jsonFile.write(json.dumps(arr))
         jsonFile.close()
-    # jsonFile = open(jsonFileName, "a+")
-    # jsonFile.write(json.dumps([{"arr": "check"}]))
-    # jsonFile.close()
-    # if last-ind > 0:
-    #     jsonFile.write(",")
-    # else:
-    #     jsonFile.write("]")
+
     return output
 
 
@@ -1090,9 +1083,9 @@ def test():
         for file in f:
             if file.endswith(".apk"):
                 filePath = os.path.join(r, file)
-                # print(filePath)
+                print('Start working on file: ', file)
                 run(filePath, path, 0, 0, '')
-            break
+            # break
 
 
 # run("/Users/motidahari/projects/android/Android-OS-attacks/niv_avi_files/samples/app93.apk",
