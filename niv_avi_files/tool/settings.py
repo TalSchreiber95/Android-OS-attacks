@@ -33,7 +33,9 @@
 #AAPT = "aapt"
 #AAPT = "/usr/local/bin/aapt"
 
-AAPT = "/usr/bin/aapt"  # location of the aapt binary
+# AAPT = "/usr/bin/aapt"  # location of the aapt binary
+# location of the aapt binary
+AAPT = "/Users/motidahari/projects/android/Android-OS-attacks/niv_avi_files/tool/aapt"
 EMPTYICON = "empty.png"
 APICALLS = "APIcalls.txt"
 BACKSMALI = "baksmali-2.0.3.jar"  # location of the baksmali.jar file
