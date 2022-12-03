@@ -892,7 +892,7 @@ def detect(smaliLocation):
 def createOutput(workingDir, appNet, appProviders, appPermissions, appFeatures,
                  appIntents, servicesANDreceiver, detectedAds,
                  dangerousCalls, appUrls, appInfos, apiPermissions, apiCalls,
-                 appFiles, appActivities, ssdeepValue, ind, last, src):
+                 appFiles, appActivities, ssdeepValue, src):
     output = dict()
     output['md5'] = appInfos[1]
     output['sha256'] = appInfos[0]
@@ -917,8 +917,8 @@ def createOutput(workingDir, appNet, appProviders, appPermissions, appFeatures,
     if not os.path.exists(workingDir):
         os.mkdir(workingDir)
 
-    if not os.path.exists(os.path.join(workingDir, 'results')):
-        os.mkdir(os.path.join(workingDir, 'results'))
+    if not os.path.exists(os.path.join(workingDir, 'result')):
+        os.mkdir(os.path.join(workingDir, 'result'))
 
     run_id = '{}drebin-{}@{}'.format(sha, str(uuid.uuid4())[:6],
                                      datetime.datetime.utcnow().strftime(
@@ -938,14 +938,15 @@ def createOutput(workingDir, appNet, appProviders, appPermissions, appFeatures,
     # return output
 
     output = report_to_feature_vector(output)
-    outpath = os.path.join(workingDir, 'results/mal_train_'+src+'.json')
+    outpath = os.path.join(workingDir, 'result/mal_train_'+src+'.json')
     print(
-        "Saving results at results/mal_train_{src}.json file...".format(src=src))
+        "Saving results at result/mal_train_{src}.json file...".format(src=src))
 
     with open(outpath, "r") as jsonFileRef:
         arr = json.load(jsonFileRef)
         jsonFileRef.close()
-
+    # arr = []
+    # print('output', output)
     arr.append(output)
     with open(outpath, 'w+') as jsonFile:
         jsonFile.truncate(0)
@@ -1000,7 +1001,8 @@ def report_to_feature_vector(report):
 #########################################################################################
 #                                  MAIN PROGRAMM                                        #
 #########################################################################################
-def run(sampleFile, workingDir, ind, last, src):
+def run(sampleFile, workingDir, src):
+    # print('sampleFile', sampleFile)
     try:
         # print(sampleFile)
         workingDir = workingDir if workingDir.endswith(
@@ -1057,7 +1059,7 @@ def run(sampleFile, workingDir, ind, last, src):
         createOutput(workingDir, appNet, appProviders, appPermissions, appFeatures,
                      appIntents, servicesANDreceiver, detectedAds,
                      dangerousCalls, appUrls, appInfos, apiPermissions,
-                     apiCalls, appFiles, appActivities, ssdeepValue, ind, last, src)
+                     apiCalls, appFiles, appActivities, ssdeepValue, src)
         # # print "copy icon file..."
         # copyIcon(sampleFile, unpackLocation, workingDir)
         # programm and log footer
@@ -1070,8 +1072,19 @@ def run(sampleFile, workingDir, ind, last, src):
 def test():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     parent = Path(dir_path).parent
-    apkFolder = 'samples'
+    apkFolder = 'apk'
     path = '{parent}/{apkFolder}'.format(parent=parent, apkFolder=apkFolder)
+    pathResult = '{path}/result'.format(path=path)
+    if not os.path.exists(pathResult):
+        os.makedirs(pathResult)
+        print('create folder')
+
+    jsonFile = '{pathResult}/mal_train_.json'.format(pathResult=pathResult)
+    if (os.path.exists(jsonFile) == False):
+        f = open(jsonFile, "w")
+    else:
+        print("File Exists")
+
     pathCleanFiles = '{parent}/{apkFolder}/results/mal_train_.json'.format(
         parent=parent, apkFolder=apkFolder)
     with open(pathCleanFiles, 'w') as cleanFile:
@@ -1087,4 +1100,4 @@ def test():
                 run(filePath, path, 0, 0, '')
 
             # break
-test()
+# test()

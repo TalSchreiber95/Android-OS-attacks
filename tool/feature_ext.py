@@ -1,24 +1,40 @@
 import staticAnalyzer
-import sys
 import os
 from glob import glob
-path=sys.argv[1]
-result=os.listdir(path)
-with open(str(sys.argv[1])+"/secsvm/"+sys.argv[1]+".json","a+") as r:
-        r.write("[")
-r.close()
-last=len(result)-1
-for i in result:
-        ind=result.index(i)
-        if not(i.endswith(".apk")):
-                continue
-        try:
-                staticAnalyzer.run(path+"/"+i, str(sys.argv[1])+"/",ind,last,str(sys.argv[1]))
-        except Exception as e:
-                print(e)
-                print("file "+str(ind)+" failed")
-                continue
+from pathlib import Path
+import ujson as json
 
-with open(str(sys.argv[1])+"/secsvm/"+sys.argv[1]+".json","a+") as r:
-        r.write("]")
-r.close()
+apkFolder = 'apks'
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+parent = Path(dir_path).parent
+path = '{parent}/{apkFolder}'.format(parent=parent, apkFolder=apkFolder)
+pathResult = '{path}/result'.format(path=path)
+
+if not os.path.exists(pathResult):
+    os.makedirs(pathResult)
+    print('create folder')
+
+jsonFile = '{pathResult}/mal_train_.json'.format(pathResult=pathResult)
+
+with open(jsonFile, 'w') as cleanFile:
+    cleanFile.truncate(0)
+    cleanFile.write(json.dumps([]))
+    cleanFile.close()
+
+
+def test():
+    for r, d, f in os.walk(path):
+        for file in f:
+            if file.endswith(".apk"):
+                filePath = os.path.join(r, file)
+                print('Start working on file: ', file)
+                try:
+                    #     print('filePath', filePath)
+                    staticAnalyzer.run(filePath, path, '')
+                except Exception as e:
+                    print(e)
+                    continue
+
+
+test()
